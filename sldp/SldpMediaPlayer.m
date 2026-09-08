@@ -5,7 +5,7 @@
 
 // mp3: 8064 = 144 * 448(max bitRate) * 1000 / 8000(min sampleRate) + padding
 // aac: 8192 = 2^13, 13bit AAC frame size (in bytes)
-#define MAX_PACKET_SIZE (9 * 1024)
+#define MAX_PACKET_SIZE (32 * 1024)
 static const size_t OPUS_HEADER_LEN = 19;
 
 @implementation SldpMediaPlayer

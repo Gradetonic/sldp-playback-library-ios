@@ -14,7 +14,8 @@ typedef NS_ENUM(int, AudioCodecType) {
     kAudioCodecTypeMp3  = 1,
     kAudioCodecTypeOpus = 2,
     kAudioCodecTypeAc3  = 3,
-    kAudioCodecTypeEac3 = 4
+    kAudioCodecTypeEac3 = 4,
+    kAudioCodecTypeFlac = 5,
 };
 
 typedef NS_ENUM(int, VideoCodecType) {
@@ -52,6 +53,8 @@ typedef NS_ENUM(int, VideoCodecType) {
 
 @property int ac3_sample_rate;
 @property uint8_t ac3_channel_layout;
+
+@property uint8_t flac_bits_per_sample;
 
 @property bool hasStartTs;
 @property uint64_t startTs;

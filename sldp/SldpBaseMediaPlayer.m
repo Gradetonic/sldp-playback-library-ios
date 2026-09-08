@@ -492,6 +492,24 @@ static const int NAL_LENGTH_PREFIX_SIZE = 4;
     return [self startAudioDecodeWithTimescale:timescale format:audioFormat channelLayout:layout packetCapacity:1];
 }
 
+-(bool)setAudioCodecFlacWithTimescale:(int)timescale
+                          sample_rate: (const int) sample_rate
+                            channels: (const uint8_t) channel_count
+                                  bps: (const uint8_t) bps {
+    
+    AudioStreamBasicDescription audioFormat = {
+        .mFormatID = kAudioFormatFLAC,
+        .mFormatFlags = kAppleLosslessFormatFlag_16BitSourceData,
+        .mSampleRate = (double)sample_rate,
+        .mChannelsPerFrame = channel_count,
+        .mFramesPerPacket = 4608
+        ,
+        //.mBitsPerChannel = 16
+    };
+    return [self startAudioDecodeWithTimescale:timescale format:audioFormat packetCapacity:1];
+}
+
+
 -(uint64_t)rebaseVideo:(uint64_t)timestamp {
     if (_videoZeroBiasTs == -1) {
         _videoZeroBiasTs = timestamp;
@@ -746,5 +764,7 @@ static const int NAL_LENGTH_PREFIX_SIZE = 4;
     [_relativeTime removeAllObjects];
     [_absoluteTime removeAllObjects];
 }
+
+
 
 @end
