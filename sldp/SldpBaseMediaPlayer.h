@@ -65,10 +65,7 @@
                             channels: (const uint8_t) ac3_channel_count layout: (AudioChannelLayoutTag) layout;
 -(bool)setAudioCodecEac3WithTimescale:(int)timescale sample_rate: (const int) ac3_sample_rate
                              channels: (const uint8_t) ac3_channel_count layout: (AudioChannelLayoutTag) layout;
--(bool)setAudioCodecFlacWithTimescale:(int)timescale
-                          sample_rate: (const int) sample_rate
-                             channels: (const uint8_t) channel_count
-                                  bps: (const uint8_t) bps;
+-(bool)setAudioCodecFlacWithTimescale:(int)timescale buffer:(const uint8_t *)buffer len:(size_t)len;
 
 -(bool)writeAudioFrameWithTimestamp:(uint64_t)timestamp numSamples:(uint32_t) numSamples buffer:(const uint8_t *)buffer len:(int)len;
 

@@ -1,5 +1,6 @@
 #import "SldpBaseMediaPlayer.h"
 #import "SldpVideoDecoderExternal.h"
+#import "Flac_Reader.h"
 
 #define TICK   startTime = [NSDate date]
 #define TOCK   NSLog(@"Video: %f", -[startTime timeIntervalSinceNow])
@@ -492,21 +493,26 @@ static const int NAL_LENGTH_PREFIX_SIZE = 4;
     return [self startAudioDecodeWithTimescale:timescale format:audioFormat channelLayout:layout packetCapacity:1];
 }
 
--(bool)setAudioCodecFlacWithTimescale:(int)timescale
-                          sample_rate: (const int) sample_rate
-                            channels: (const uint8_t) channel_count
-                                  bps: (const uint8_t) bps {
+-(bool)setAudioCodecFlacWithTimescale:(int)timescale buffer:(const uint8_t *)buffer len:(size_t)len{
     
+    Flac_Reader* parser = [[Flac_Reader alloc]initWithBuffer:buffer buffer_size:(uint32_t)len];
+    if (![parser processHeader]) {
+        return false;
+    }
+    int sampleRate = parser.sampleRate;
+    int frames = parser.framesPerPacket;
+    int channels = parser.channels;
+    AudioChannelLayoutTag layout = parser.channelLayout;
+    AudioFormatFlags flags = parser.flags;
+
     AudioStreamBasicDescription audioFormat = {
         .mFormatID = kAudioFormatFLAC,
-        .mFormatFlags = kAppleLosslessFormatFlag_16BitSourceData,
-        .mSampleRate = (double)sample_rate,
-        .mChannelsPerFrame = channel_count,
-        .mFramesPerPacket = 4608
-        ,
-        //.mBitsPerChannel = 16
+        .mFormatFlags = flags,
+        .mSampleRate = (double)sampleRate,
+        .mChannelsPerFrame = channels,
+        .mFramesPerPacket = frames
     };
-    return [self startAudioDecodeWithTimescale:timescale format:audioFormat packetCapacity:1];
+    return [self startAudioDecodeWithTimescale:timescale format:audioFormat channelLayout:layout packetCapacity:1];
 }
 
 
