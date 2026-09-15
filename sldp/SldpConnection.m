@@ -19,7 +19,8 @@ typedef NS_ENUM(uint8_t, WebsocketLiveFrameType) {
     WEB_VP9_KEY_FRAME = 12,
     WEB_VP9_FRAME = 13,
     WEB_MP3 = 14,
-    WEB_OPUS_FRAME = 15
+    WEB_OPUS_FRAME = 15,
+    WEB_FLAC_FRAME = 20
 };
 
 typedef NS_ENUM(int, RtspConnectionState) {
@@ -544,7 +545,6 @@ static int SLDP_MAX_FRAME_SIZE = 4 * 1024 * 1024;
                timestamp:(uint64_t)timestamp steady_timestamp:(uint64_t)steady_timestamp
                   buffer:(uint8_t*)buffer len:(int)len {
  
-    //NSLog(@"audio frame: type=%d %lld len=%d", frame_type, timestamp, len);
     switch (frame_type) {
         case WEB_AAC_SEQUENCE_HEADER:
             streamInfo.audioCodec = kAudioCodecTypeAac;
@@ -561,8 +561,15 @@ static int SLDP_MAX_FRAME_SIZE = 4 * 1024 * 1024;
         case WEB_OPUS_FRAME:
             streamInfo.audioCodec = kAudioCodecTypeOpus;
             [_streamListener writeAudioFrameWithStreamInfo:streamInfo timestamp:timestamp numSamples: 0 buffer:buffer len:len];
+            break;
+        case WEB_FLAC_FRAME:
+            streamInfo.audioCodec = kAudioCodecTypeFlac;
+            [_streamListener writeAudioFrameWithStreamInfo:streamInfo timestamp:timestamp numSamples: 0 buffer:buffer len:len];
+            break;
 
         default:
+            NSLog(@"Unknown audio frame: type=%d %lld len=%d", frame_type, timestamp, len);
+
             break;
     }
     if (steady_timestamp != INVALID_TIMESTAMP && (frame_type == WEB_MP3 || frame_type == WEB_AAC_FRAME || frame_type == WEB_OPUS_FRAME)) {
