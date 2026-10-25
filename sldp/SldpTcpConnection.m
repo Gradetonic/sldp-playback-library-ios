@@ -28,15 +28,9 @@ static const int MAX_SND_SIZE = 8 * 1024;
     
     nw_parameters_configure_protocol_block_t configure_tls = NW_PARAMETERS_DISABLE_PROTOCOL;
     if (useSSL_) {
-        _verifyQueue = dispatch_queue_create("com.softvelum.larix.stream.verify_queue", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, 0));
-        
-        configure_tls = ^(nw_protocol_options_t tls_options) {
-            sec_protocol_options_t options = nw_tls_copy_sec_protocol_options(tls_options);
-            sec_protocol_options_set_verify_block(options, ^(sec_protocol_metadata_t metadata, sec_trust_t trust_ref, sec_protocol_verify_complete_t sec_protocol_verify_complete) {
-                // forget safety, trust anyone
-                sec_protocol_verify_complete(true);
-            }, self.verifyQueue);
-        };
+        // Default TLS: Network.framework validates the certificate chain against the system trust store and checks
+        // the host name. The upstream code installed a verify block that accepted any certificate.
+        configure_tls = NW_PARAMETERS_DEFAULT_CONFIGURATION;
     }
     
     nw_parameters_configure_protocol_block_t configure_tcp = ^(nw_protocol_options_t tcp_options) {
